@@ -2,6 +2,7 @@ import requests
 import re
 import os
 import time
+import Utils
 
 headers = {'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.105 Safari/537.36'}
 
@@ -25,6 +26,8 @@ number = 1
 number_exception = 1
 # 初始化正在下载数
 number_download = 1
+# 初始化总耗时
+totalTime = 0.00
 
 pages = 1
 while(pages <= start):
@@ -52,33 +55,38 @@ while(pages <= start):
             songFileData = requests.get(url = songUrl, headers=headers).content
             path = 'QuanMinKGe_SongsDownload\\' + songFilenameAndID + '.m4a'
             try:
-                if(os.path.isfile(path)):
+                if(os.path.isfile(path)):# 判断是否有同名文件
                     songFilenameAndID = songFilenameAndID + "_" + str(number)
                     number = number + 1
                 with open('QuanMinKGe_SongsDownload\\' + songFilenameAndID + '.m4a', mode = 'wb') as f:
                     f.write(songFileData)
-                    print("(" + str(number_download) + "/" + str(songsAmount) + ")" + "Download " + songFilenameAndID + ".m4a" + " Succeedfully!")
+                    print("\n(" + str(number_download) + "/" + str(songsAmount) + ")", end="")
+                    everyConsumeTime = Utils.progressbar(songUrl, path, songFilenameAndID)
+                    totalTime = everyConsumeTime + totalTime
                     number_download = number_download + 1
             except (FileNotFoundError, OSError):
                 originSongFilenameAndID = songFilenameAndID
                 songFilenameAndID = "Need to be renamed"
-                if(os.path.isfile('QuanMinKGe_SongsDownload\\Need to be renamed.m4a')):
+                if(os.path.isfile('QuanMinKGe_SongsDownload\\Need to be renamed.m4a')):# 判断是否有同名文件
                     songFilenameAndID = "Need to be renamed" + "_" + str(number_exception)
                     number_exception = number_exception + 1
                 with open('QuanMinKGe_SongsDownload\\' + songFilenameAndID + '.m4a', mode = 'wb') as f:
                     f.write(songFileData)
-                    print("(" + str(number_download) + "/" + str(songsAmount) + ")" + "Download " + originSongFilenameAndID + ".m4a" + " Succeedfully! The filename has been renamed in \"" + songFilenameAndID + "\" because of system not allowed characters.")
+                    print("\n(" + str(number_download) + "/" + str(songsAmount) + ")", end="")
+                    everyConsumeTime = Utils.progressbar(songUrl, 'QuanMinKGe_SongsDownload\\Need to be renamed.m4a', originSongFilenameAndID)
+                    print("The filename has been renamed in \"" + songFilenameAndID + "\" because of system not allowed characters.")
+                    totalTime = everyConsumeTime + totalTime
                     number_download = number_download + 1
     pages = pages + 1
 
-print("All songs have been downloaded!")
-
+print("\nAll songs have been downloaded!")
+print("Total Time: " + str(round(totalTime, 2)) + "sec")
 
 
 # TODO 带英文冒号的歌曲无法正确命名
 # TODO 优化重名文件命名规则
 # TODO 下载视频MV
-# TODO 优化下载进度条
 # TODO 合唱曲文件名优化
+# TODO 当遇到网络连接超时的处理方法
 
 # 文件名字符方面的错误不想再修了，太麻烦了
