@@ -1,8 +1,7 @@
-import os
 import requests
 import time
 
-def progressbar(url, path, songInfo):
+def progressbar(url, path, songInfo): # 进度条
     start = time.time()  # 下载开始时间
     response = requests.get(url, stream=True)
     size = 0    # 初始化已下载大小
@@ -18,7 +17,9 @@ def progressbar(url, path, songInfo):
                     size += len(data)
                     print('\r'+'Progress:[%s%.2f%%' % ('>'*int(round(size*50 / content_size, 0)) + ' '*int(round(50 - size*50 / content_size, 0)) + '] ',float(size / content_size * 100)), end=' ')
         end = time.time()   # 下载结束时间
-        print('\nDownload completed!,times: %.2fsec' % (end - start))  # 输出下载用时时间
-        return end - start
+        print('\nDownload completed! time: %.2fsec' % (end - start))  # 输出下载用时时间
     except:
         print('Progressbar Error!')
+
+def characterChange(originstr): # 替换windows非法字符
+    return str(originstr).replace(":", "：").replace("*", "_").replace("?", "_").replace("\"", "_").replace("<", "_").replace(">", "_").replace("|", "_").replace("\\", "_").replace("/", "_")
