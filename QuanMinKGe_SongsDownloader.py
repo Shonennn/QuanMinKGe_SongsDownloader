@@ -34,15 +34,25 @@ while(pages <= start): # 扫描完所有页码后程序结束
     htmlData_Url = response_Url.text
     pattern_SongShareid = re.compile('"shareid": "(.*?)",') # 匹配歌曲shareid
     result_SongShareid = pattern_SongShareid.findall(htmlData_Url) # 找到歌曲shareid
-    # print(result_SongShareid)
     result_SongEntry = ['https://node.kg.qq.com/play?s=' + everySongShareid + '&g_f=personal' for everySongShareid in result_SongShareid] # 获取每首歌所在的网页链接
-    # print(result_SongEntry)
+
     # 获取每首歌的Url，并将其下载到本地
     for songEntryUrl in result_SongEntry:
         response_SongEntryUrl = requests.get(url = songEntryUrl,headers = headers) # 向每首歌所在网页发出请求
         htmlData_SongEntryUrl = response_SongEntryUrl.text # 获取每首歌所在网页的html
         pattern_SongUrl = re.compile('"playurl":"http://(.*?)",')  # 匹配下载歌曲Url
         result_SongUrl = pattern_SongUrl.findall(htmlData_SongEntryUrl)  # 找到下载歌曲Url
+        pattern_MVUrl = re.compile('"playurl_video":"http://(.*?)",') # 匹配下载MVUrl
+        result_MVUrl = pattern_MVUrl.findall(htmlData_SongEntryUrl) # 找到下载MVUrl
+        Filename_extension = '.m4a' # 初始化文件扩展名（文件格式）
+
+        # 判断是否为MV
+        if(len(result_SongUrl) == 0 and len(result_MVUrl) == 1):
+            Filename_extension = '.mp4'
+        elif(len(result_SongUrl) == 1 and len(result_MVUrl) == 0):
+            Filename_extension = '.m4a'
+        else:
+            print("Search SongUrl or MVUrl Error!")
 
         # 判断歌曲是否为合唱曲
         pattern_soloorcouple = re.compile('<div class="singer_show singer_show--(.*?)">')
@@ -53,7 +63,13 @@ while(pages <= start): # 扫描完所有页码后程序结束
         if(soloorcouple == "solo"):
             pattern_FilenameAndID = re.compile('<title>(.*?)- 全民K歌，KTV交友社区</title>') # 匹配歌曲名和歌手ID
             result_FilenameAndID = pattern_FilenameAndID.findall(htmlData_SongEntryUrl) # 找到歌曲名和歌手ID
-            finalResult = list(zip(result_SongUrl, result_FilenameAndID)) # 将歌曲Url和歌曲名和歌手ID存于一个列表中
+            result_FilenameAndID[0] = re.sub('\[em](.*?)\[/em]', '[表情符号]', str(result_FilenameAndID[0])) # 文件名中包含QQ表情的则将其替换成"[表情符号]"
+            if(Filename_extension == '.m4a'):
+                finalResult = list(zip(result_SongUrl, result_FilenameAndID)) # 将歌曲Url和歌曲名和歌手ID存于一个列表中
+            elif(Filename_extension == '.mp4'):
+                finalResult = list(zip(result_MVUrl, result_FilenameAndID))  # 将歌曲Url和MV名和歌手ID存于一个列表中
+            else:
+                print("Combine Process Error!")
 
             for songUrl, songFilenameAndID in finalResult:
                 songUrl = "http://" + songUrl
@@ -61,27 +77,27 @@ while(pages <= start): # 扫描完所有页码后程序结束
                 originSongFilenameAndID = songFilenameAndID
                 number = 1  # 初始化同名文件数
                 try:
-                    path = 'QuanMinKGe_SongsDownload\\' + Utils.characterChange(songFilenameAndID) + '.m4a'
+                    path = 'QuanMinKGe_SongsDownload\\' + Utils.characterChange(songFilenameAndID) + Filename_extension
                     while (os.path.isfile(path)):  # 判断是否有同名文件
                         songFilenameAndID = originSongFilenameAndID + "_" + str(number)
-                        path = 'QuanMinKGe_SongsDownload\\' + Utils.characterChange(songFilenameAndID) + '.m4a'
+                        path = 'QuanMinKGe_SongsDownload\\' + Utils.characterChange(songFilenameAndID) + Filename_extension
                         number = number + 1
-                    with open('QuanMinKGe_SongsDownload\\' + Utils.characterChange(songFilenameAndID) + '.m4a', mode='wb') as f:
+                    with open('QuanMinKGe_SongsDownload\\' + Utils.characterChange(songFilenameAndID) + Filename_extension, mode='wb') as f:
                         f.write(songFileData)
                         print("\n(" + str(number_download) + "/" + str(songsAmount) + ")", end="")
-                        Utils.progressbar(songUrl, path, songFilenameAndID)
+                        Utils.progressbar(songUrl, path, songFilenameAndID + Filename_extension)
                         number_download = number_download + 1  # 已下载的数量+1
                 except (FileNotFoundError, OSError):
                     songFilenameAndID = "Need_to_be_renamed"
-                    path = 'QuanMinKGe_SongsDownload\\' + Utils.characterChange(songFilenameAndID) + '.m4a'
+                    path = 'QuanMinKGe_SongsDownload\\' + Utils.characterChange(songFilenameAndID) + Filename_extension
                     while (os.path.isfile(path)):  # 判断是否有同名文件
                         songFilenameAndID = "Need_to_be_renamed" + "_" + str(number_exception)
-                        path = 'QuanMinKGe_SongsDownload\\' + Utils.characterChange(songFilenameAndID) + '.m4a'
+                        path = 'QuanMinKGe_SongsDownload\\' + Utils.characterChange(songFilenameAndID) + Filename_extension
                         number_exception = number_exception + 1
-                    with open('QuanMinKGe_SongsDownload\\' + Utils.characterChange(songFilenameAndID) + '.m4a', mode='wb') as f:
+                    with open('QuanMinKGe_SongsDownload\\' + Utils.characterChange(songFilenameAndID) + Filename_extension, mode='wb') as f:
                         f.write(songFileData)
                         print("\n(" + str(number_download) + "/" + str(songsAmount) + ")", end="")
-                        Utils.progressbar(songUrl, 'QuanMinKGe_SongsDownload\\Need_to_be_renamed.m4a', originSongFilenameAndID)
+                        Utils.progressbar(songUrl, 'QuanMinKGe_SongsDownload\\Need_to_be_renamed' + Filename_extension, originSongFilenameAndID + Filename_extension)
                         print("The filename has been renamed in \"" + songFilenameAndID + "\" because of system not allowed characters.")
                         number_download = number_download + 1  # 已下载的数量+1
 
@@ -93,7 +109,15 @@ while(pages <= start): # 扫描完所有页码后程序结束
             result_ID = pattern_ID.findall(htmlData_SongEntryUrl) # 找到歌手ID
             pattern_partnerID = re.compile('"hc_nick":"(.*?)","hc_second_sing_count"') # 匹配合唱伙伴ID
             result_partnerID = pattern_partnerID.findall(htmlData_SongEntryUrl) # 找到合唱伙伴ID
-            finalResult = list(zip(result_SongUrl, result_Filename, result_ID, result_partnerID)) # 将歌曲Url和歌曲名和歌手ID和合唱伙伴ID存于一个列表中
+            result_Filename[0] = re.sub('\[em](.*?)\[/em]', '[表情符号]', str(result_Filename[0])) # 文件名中包含QQ表情的则将其替换成"[表情符号]"
+            result_ID[0] = re.sub('\[em](.*?)\[/em]', '[表情符号]', str(result_ID[0])) # 文件名中包含QQ表情的则将其替换成"[表情符号]"
+            result_partnerID[0] = re.sub('\[em](.*?)\[/em]', '[表情符号]', str(result_partnerID[0])) # 文件名中包含QQ表情的则将其替换成"[表情符号]"
+            if(Filename_extension == '.m4a'):
+                finalResult = list(zip(result_SongUrl, result_Filename, result_ID, result_partnerID)) # 将歌曲Url和歌曲名和歌手ID和合唱伙伴ID存于一个列表中
+            elif(Filename_extension == '.mp4'):
+                finalResult = list(zip(result_MVUrl, result_Filename, result_ID, result_partnerID))  # 将歌曲Url和MV名和歌手ID存于一个列表中
+            else:
+                print("Combine Process Error!")
 
             for songUrl, songFilename, ID, partnerID in finalResult:
                 songUrl = "http://" + songUrl
@@ -102,28 +126,28 @@ while(pages <= start): # 扫描完所有页码后程序结束
                 originSongFilenameandIDandpartnerID = songFilenameandIDandpartnerID
                 number = 1  # 初始化同名文件数
                 try:
-                    path = 'QuanMinKGe_SongsDownload\\' + Utils.characterChange(songFilenameandIDandpartnerID) + '.m4a'
+                    path = 'QuanMinKGe_SongsDownload\\' + Utils.characterChange(songFilenameandIDandpartnerID) + Filename_extension
                     while (os.path.isfile(path)):  # 判断是否有同名文件
                         songFilenameandIDandpartnerID = originSongFilenameandIDandpartnerID + "_" + str(number)
-                        path = 'QuanMinKGe_SongsDownload\\' + Utils.characterChange(songFilenameandIDandpartnerID) + '.m4a'
+                        path = 'QuanMinKGe_SongsDownload\\' + Utils.characterChange(songFilenameandIDandpartnerID) + Filename_extension
                         number = number + 1
-                    with open('QuanMinKGe_SongsDownload\\' + Utils.characterChange(songFilenameandIDandpartnerID) + '.m4a', mode='wb') as f:
+                    with open('QuanMinKGe_SongsDownload\\' + Utils.characterChange(songFilenameandIDandpartnerID) + Filename_extension, mode='wb') as f:
                         f.write(songFileData)
                         print("\n(" + str(number_download) + "/" + str(songsAmount) + ")", end="")
-                        Utils.progressbar(songUrl, path, songFilenameandIDandpartnerID)
+                        Utils.progressbar(songUrl, path, songFilenameandIDandpartnerID + Filename_extension)
                         number_download = number_download + 1  # 已下载的数量+1
                 except (FileNotFoundError, OSError):
                     songFilenameandIDandpartnerID = "Need_to_be_renamed"
-                    path = 'QuanMinKGe_SongsDownload\\' + Utils.characterChange(songFilenameandIDandpartnerID) + '.m4a'
+                    path = 'QuanMinKGe_SongsDownload\\' + Utils.characterChange(songFilenameandIDandpartnerID) + Filename_extension
                     while (os.path.isfile(path)):  # 判断是否有同名文件
                         songFilenameAndID = "Need_to_be_renamed" + "_" + str(number_exception)
-                        path = 'QuanMinKGe_SongsDownload\\' + Utils.characterChange(songFilenameandIDandpartnerID) + '.m4a'
+                        path = 'QuanMinKGe_SongsDownload\\' + Utils.characterChange(songFilenameandIDandpartnerID) + Filename_extension
                         number_exception = number_exception + 1
-                    with open('QuanMinKGe_SongsDownload\\' + Utils.characterChange(songFilenameandIDandpartnerID) + '.m4a', mode='wb') as f:
+                    with open('QuanMinKGe_SongsDownload\\' + Utils.characterChange(songFilenameandIDandpartnerID) + Filename_extension, mode='wb') as f:
                         f.write(songFileData)
                         print("\n(" + str(number_download) + "/" + str(songsAmount) + ")", end="")
-                        Utils.progressbar(songUrl, 'QuanMinKGe_SongsDownload\\Need_to_be_renamed.m4a', originSongFilenameandIDandpartnerID)
-                        print("The filename has been renamed in \"" + songFilenameandIDandpartnerID + "\" because of system not allowed characters.")
+                        Utils.progressbar(songUrl, 'QuanMinKGe_SongsDownload\\Need_to_be_renamed' + Filename_extension, originSongFilenameandIDandpartnerID + Filename_extension)
+                        print("The filename has been renamed in \"" + songFilenameandIDandpartnerID + Filename_extension + "\" because of system not allowed characters.")
                         number_download = number_download + 1  # 已下载的数量+1
 
     pages = pages + 1 # 每浏览完1页（15首歌）时页数加1
@@ -133,8 +157,5 @@ totalTime = end_time - start_time # 计算得到总耗时
 print("\nAll songs have been downloaded!")
 print("Total Time: " + str(round(totalTime, 2)) + "sec")
 
-# TODO 下载视频MV
-# TODO QQ表情符号转emoji
 # TODO 当遇到网络连接超时的处理方法
 # TODO 加入RGB
-# TODO 遇到其他特殊字符时可能导致程序卡住
