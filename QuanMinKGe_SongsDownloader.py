@@ -77,27 +77,27 @@ while(pages <= start): # 扫描完所有页码后程序结束
                 originSongFilenameAndID = songFilenameAndID
                 number = 1  # 初始化同名文件数
                 try:
-                    path = 'QuanMinKGe_SongsDownload\\' + Utils.characterChange(songFilenameAndID) + Filename_extension
+                    path = 'SongsDownloadDirectory\\' + Utils.characterChange(songFilenameAndID) + Filename_extension
                     while (os.path.isfile(path)):  # 判断是否有同名文件
                         songFilenameAndID = originSongFilenameAndID + "_" + str(number)
-                        path = 'QuanMinKGe_SongsDownload\\' + Utils.characterChange(songFilenameAndID) + Filename_extension
+                        path = 'SongsDownloadDirectory\\' + Utils.characterChange(songFilenameAndID) + Filename_extension
                         number = number + 1
-                    with open('QuanMinKGe_SongsDownload\\' + Utils.characterChange(songFilenameAndID) + Filename_extension, mode='wb') as f:
+                    with open('SongsDownloadDirectory\\' + Utils.characterChange(songFilenameAndID) + Filename_extension, mode='wb') as f:
                         f.write(songFileData)
                         print("\n(" + str(number_download) + "/" + str(songsAmount) + ")", end="")
                         Utils.progressbar(songUrl, path, songFilenameAndID + Filename_extension)
                         number_download = number_download + 1  # 已下载的数量+1
                 except (FileNotFoundError, OSError):
                     songFilenameAndID = "Need_to_be_renamed"
-                    path = 'QuanMinKGe_SongsDownload\\' + Utils.characterChange(songFilenameAndID) + Filename_extension
+                    path = 'SongsDownloadDirectory\\' + Utils.characterChange(songFilenameAndID) + Filename_extension
                     while (os.path.isfile(path)):  # 判断是否有同名文件
                         songFilenameAndID = "Need_to_be_renamed" + "_" + str(number_exception)
-                        path = 'QuanMinKGe_SongsDownload\\' + Utils.characterChange(songFilenameAndID) + Filename_extension
+                        path = 'SongsDownloadDirectory\\' + Utils.characterChange(songFilenameAndID) + Filename_extension
                         number_exception = number_exception + 1
-                    with open('QuanMinKGe_SongsDownload\\' + Utils.characterChange(songFilenameAndID) + Filename_extension, mode='wb') as f:
+                    with open('SongsDownloadDirectory\\' + Utils.characterChange(songFilenameAndID) + Filename_extension, mode='wb') as f:
                         f.write(songFileData)
                         print("\n(" + str(number_download) + "/" + str(songsAmount) + ")", end="")
-                        Utils.progressbar(songUrl, 'QuanMinKGe_SongsDownload\\Need_to_be_renamed' + Filename_extension, originSongFilenameAndID + Filename_extension)
+                        Utils.progressbar(songUrl, 'SongsDownloadDirectory\\Need_to_be_renamed' + Filename_extension, originSongFilenameAndID + Filename_extension)
                         print("The filename has been renamed in \"" + songFilenameAndID + "\" because of system not allowed characters.")
                         number_download = number_download + 1  # 已下载的数量+1
 
@@ -126,27 +126,27 @@ while(pages <= start): # 扫描完所有页码后程序结束
                 originSongFilenameandIDandpartnerID = songFilenameandIDandpartnerID
                 number = 1  # 初始化同名文件数
                 try:
-                    path = 'QuanMinKGe_SongsDownload\\' + Utils.characterChange(songFilenameandIDandpartnerID) + Filename_extension
+                    path = 'SongsDownloadDirectory\\' + Utils.characterChange(songFilenameandIDandpartnerID) + Filename_extension
                     while (os.path.isfile(path)):  # 判断是否有同名文件
                         songFilenameandIDandpartnerID = originSongFilenameandIDandpartnerID + "_" + str(number)
-                        path = 'QuanMinKGe_SongsDownload\\' + Utils.characterChange(songFilenameandIDandpartnerID) + Filename_extension
+                        path = 'SongsDownloadDirectory\\' + Utils.characterChange(songFilenameandIDandpartnerID) + Filename_extension
                         number = number + 1
-                    with open('QuanMinKGe_SongsDownload\\' + Utils.characterChange(songFilenameandIDandpartnerID) + Filename_extension, mode='wb') as f:
+                    with open('SongsDownloadDirectory\\' + Utils.characterChange(songFilenameandIDandpartnerID) + Filename_extension, mode='wb') as f:
                         f.write(songFileData)
                         print("\n(" + str(number_download) + "/" + str(songsAmount) + ")", end="")
                         Utils.progressbar(songUrl, path, songFilenameandIDandpartnerID + Filename_extension)
                         number_download = number_download + 1  # 已下载的数量+1
                 except (FileNotFoundError, OSError):
                     songFilenameandIDandpartnerID = "Need_to_be_renamed"
-                    path = 'QuanMinKGe_SongsDownload\\' + Utils.characterChange(songFilenameandIDandpartnerID) + Filename_extension
+                    path = 'SongsDownloadDirectory\\' + Utils.characterChange(songFilenameandIDandpartnerID) + Filename_extension
                     while (os.path.isfile(path)):  # 判断是否有同名文件
                         songFilenameAndID = "Need_to_be_renamed" + "_" + str(number_exception)
-                        path = 'QuanMinKGe_SongsDownload\\' + Utils.characterChange(songFilenameandIDandpartnerID) + Filename_extension
+                        path = 'SongsDownloadDirectory\\' + Utils.characterChange(songFilenameandIDandpartnerID) + Filename_extension
                         number_exception = number_exception + 1
-                    with open('QuanMinKGe_SongsDownload\\' + Utils.characterChange(songFilenameandIDandpartnerID) + Filename_extension, mode='wb') as f:
+                    with open('SongsDownloadDirectory\\' + Utils.characterChange(songFilenameandIDandpartnerID) + Filename_extension, mode='wb') as f:
                         f.write(songFileData)
                         print("\n(" + str(number_download) + "/" + str(songsAmount) + ")", end="")
-                        Utils.progressbar(songUrl, 'QuanMinKGe_SongsDownload\\Need_to_be_renamed' + Filename_extension, originSongFilenameandIDandpartnerID + Filename_extension)
+                        Utils.progressbar(songUrl, 'SongsDownloadDirectory\\Need_to_be_renamed' + Filename_extension, originSongFilenameandIDandpartnerID + Filename_extension)
                         print("The filename has been renamed in \"" + songFilenameandIDandpartnerID + Filename_extension + "\" because of system not allowed characters.")
                         number_download = number_download + 1  # 已下载的数量+1
 
