@@ -172,4 +172,3 @@ print("\n")
 input("Press enter to exit...")
 
 # TODO 当遇到网络连接超时的处理方法
-# 加入RGB
