@@ -3,6 +3,7 @@ import re
 import os
 import time
 import Utils
+import WConio2
 
 headers = {'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.105 Safari/537.36'}
 
@@ -19,6 +20,7 @@ print("You are entering " + str(result_SingerInfo) + "'s Mainpage.")
 time.sleep(2) # 延时2秒
 print("Now start to download.")
 songsAmount = int(''.join(result_SongsAmount))
+Utils.characterChange(result_SingerInfo)
 start = int(songsAmount / 15 + 1)
 
 number_exception = 1 # 初始化异常文件名文件和同名文件数
@@ -52,7 +54,7 @@ while(pages <= start): # 扫描完所有页码后程序结束
         elif(len(result_SongUrl) == 1 and len(result_MVUrl) == 0):
             Filename_extension = '.m4a'
         else:
-            print("Search SongUrl or MVUrl Error!")
+            print("\nSearch SongUrl or MVUrl Error!")
 
         # 判断歌曲是否为合唱曲
         pattern_soloorcouple = re.compile('<div class="singer_show singer_show--(.*?)">')
@@ -77,27 +79,31 @@ while(pages <= start): # 扫描完所有页码后程序结束
                 originSongFilenameAndID = songFilenameAndID
                 number = 1  # 初始化同名文件数
                 try:
-                    path = 'SongsDownloadDirectory\\' + Utils.characterChange(songFilenameAndID) + Filename_extension
+                    if not os.path.exists('SongsDownloadDirectory\\' + str(''.join(result_SingerInfo))):
+                        os.makedirs('SongsDownloadDirectory\\' + str(''.join(result_SingerInfo)))
+                    path = 'SongsDownloadDirectory\\'  + str(''.join(result_SingerInfo)) + '\\' + Utils.characterChange(songFilenameAndID) + Filename_extension
                     while (os.path.isfile(path)):  # 判断是否有同名文件
                         songFilenameAndID = originSongFilenameAndID + "_" + str(number)
-                        path = 'SongsDownloadDirectory\\' + Utils.characterChange(songFilenameAndID) + Filename_extension
+                        path = 'SongsDownloadDirectory\\' + str(''.join(result_SingerInfo)) + '\\' + Utils.characterChange(songFilenameAndID) + Filename_extension
                         number = number + 1
-                    with open('SongsDownloadDirectory\\' + Utils.characterChange(songFilenameAndID) + Filename_extension, mode='wb') as f:
+                    with open('SongsDownloadDirectory\\' + str(''.join(result_SingerInfo)) + '\\' + Utils.characterChange(songFilenameAndID) + Filename_extension, mode='wb') as f:
                         f.write(songFileData)
                         print("\n(" + str(number_download) + "/" + str(songsAmount) + ")", end="")
                         Utils.progressbar(songUrl, path, songFilenameAndID + Filename_extension)
                         number_download = number_download + 1  # 已下载的数量+1
                 except (FileNotFoundError, OSError):
                     songFilenameAndID = "Need_to_be_renamed"
-                    path = 'SongsDownloadDirectory\\' + Utils.characterChange(songFilenameAndID) + Filename_extension
+                    if not os.path.exists('SongsDownloadDirectory\\' + str(''.join(result_SingerInfo))):
+                        os.makedirs('SongsDownloadDirectory\\' + str(''.join(result_SingerInfo)))
+                    path = 'SongsDownloadDirectory\\' + str(''.join(result_SingerInfo)) + '\\' + Utils.characterChange(songFilenameAndID) + Filename_extension
                     while (os.path.isfile(path)):  # 判断是否有同名文件
                         songFilenameAndID = "Need_to_be_renamed" + "_" + str(number_exception)
-                        path = 'SongsDownloadDirectory\\' + Utils.characterChange(songFilenameAndID) + Filename_extension
+                        path = 'SongsDownloadDirectory\\' + str(''.join(result_SingerInfo)) + '\\' + Utils.characterChange(songFilenameAndID) + Filename_extension
                         number_exception = number_exception + 1
-                    with open('SongsDownloadDirectory\\' + Utils.characterChange(songFilenameAndID) + Filename_extension, mode='wb') as f:
+                    with open('SongsDownloadDirectory\\' + str(''.join(result_SingerInfo)) + '\\' + Utils.characterChange(songFilenameAndID) + Filename_extension, mode='wb') as f:
                         f.write(songFileData)
                         print("\n(" + str(number_download) + "/" + str(songsAmount) + ")", end="")
-                        Utils.progressbar(songUrl, 'SongsDownloadDirectory\\Need_to_be_renamed' + Filename_extension, originSongFilenameAndID + Filename_extension)
+                        Utils.progressbar(songUrl, 'SongsDownloadDirectory\\' + str(''.join(result_SingerInfo)) + '\\Need_to_be_renamed' + Filename_extension, originSongFilenameAndID + Filename_extension)
                         print("The filename has been renamed in \"" + songFilenameAndID + "\" because of system not allowed characters.")
                         number_download = number_download + 1  # 已下载的数量+1
 
@@ -126,27 +132,31 @@ while(pages <= start): # 扫描完所有页码后程序结束
                 originSongFilenameandIDandpartnerID = songFilenameandIDandpartnerID
                 number = 1  # 初始化同名文件数
                 try:
-                    path = 'SongsDownloadDirectory\\' + Utils.characterChange(songFilenameandIDandpartnerID) + Filename_extension
+                    if not os.path.exists('SongsDownloadDirectory\\' + str(''.join(result_SingerInfo))):
+                        os.makedirs('SongsDownloadDirectory\\' + str(''.join(result_SingerInfo)))
+                    path = 'SongsDownloadDirectory\\' + str(''.join(result_SingerInfo)) + '\\' + Utils.characterChange(songFilenameandIDandpartnerID) + Filename_extension
                     while (os.path.isfile(path)):  # 判断是否有同名文件
                         songFilenameandIDandpartnerID = originSongFilenameandIDandpartnerID + "_" + str(number)
-                        path = 'SongsDownloadDirectory\\' + Utils.characterChange(songFilenameandIDandpartnerID) + Filename_extension
+                        path = 'SongsDownloadDirectory\\' + str(''.join(result_SingerInfo)) + '\\' + Utils.characterChange(songFilenameandIDandpartnerID) + Filename_extension
                         number = number + 1
-                    with open('SongsDownloadDirectory\\' + Utils.characterChange(songFilenameandIDandpartnerID) + Filename_extension, mode='wb') as f:
+                    with open('SongsDownloadDirectory\\' + str(''.join(result_SingerInfo)) + '\\' + Utils.characterChange(songFilenameandIDandpartnerID) + Filename_extension, mode='wb') as f:
                         f.write(songFileData)
                         print("\n(" + str(number_download) + "/" + str(songsAmount) + ")", end="")
                         Utils.progressbar(songUrl, path, songFilenameandIDandpartnerID + Filename_extension)
                         number_download = number_download + 1  # 已下载的数量+1
                 except (FileNotFoundError, OSError):
                     songFilenameandIDandpartnerID = "Need_to_be_renamed"
-                    path = 'SongsDownloadDirectory\\' + Utils.characterChange(songFilenameandIDandpartnerID) + Filename_extension
+                    if not os.path.exists('SongsDownloadDirectory\\' + str(''.join(result_SingerInfo))):
+                        os.makedirs('SongsDownloadDirectory\\' + str(''.join(result_SingerInfo)))
+                    path = 'SongsDownloadDirectory\\' + str(''.join(result_SingerInfo)) + '\\' + Utils.characterChange(songFilenameandIDandpartnerID) + Filename_extension
                     while (os.path.isfile(path)):  # 判断是否有同名文件
                         songFilenameAndID = "Need_to_be_renamed" + "_" + str(number_exception)
-                        path = 'SongsDownloadDirectory\\' + Utils.characterChange(songFilenameandIDandpartnerID) + Filename_extension
+                        path = 'SongsDownloadDirectory\\' + str(''.join(result_SingerInfo)) + '\\' + Utils.characterChange(songFilenameandIDandpartnerID) + Filename_extension
                         number_exception = number_exception + 1
-                    with open('SongsDownloadDirectory\\' + Utils.characterChange(songFilenameandIDandpartnerID) + Filename_extension, mode='wb') as f:
+                    with open('SongsDownloadDirectory\\' + str(''.join(result_SingerInfo)) + '\\' + Utils.characterChange(songFilenameandIDandpartnerID) + Filename_extension, mode='wb') as f:
                         f.write(songFileData)
                         print("\n(" + str(number_download) + "/" + str(songsAmount) + ")", end="")
-                        Utils.progressbar(songUrl, 'SongsDownloadDirectory\\Need_to_be_renamed' + Filename_extension, originSongFilenameandIDandpartnerID + Filename_extension)
+                        Utils.progressbar(songUrl, 'SongsDownloadDirectory\\' + str(''.join(result_SingerInfo)) + '\\Need_to_be_renamed' + Filename_extension, originSongFilenameandIDandpartnerID + Filename_extension)
                         print("The filename has been renamed in \"" + songFilenameandIDandpartnerID + Filename_extension + "\" because of system not allowed characters.")
                         number_download = number_download + 1  # 已下载的数量+1
 
@@ -154,8 +164,12 @@ while(pages <= start): # 扫描完所有页码后程序结束
 
 end_time = time.time() # 初始化结束时间
 totalTime = end_time - start_time # 计算得到总耗时
+WConio2.textcolor(WConio2.GREEN)
 print("\nAll songs have been downloaded!")
 print("Total Time: " + str(round(totalTime, 2)) + "sec")
+WConio2.textcolor(WConio2.WHITE)
+print("\n")
+input("Press enter to exit...")
 
 # TODO 当遇到网络连接超时的处理方法
-# TODO 加入RGB
+# 加入RGB
