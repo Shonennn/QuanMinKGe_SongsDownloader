@@ -170,5 +170,3 @@ print("Total Time: " + str(round(totalTime, 2)) + "sec")
 WConio2.textcolor(WConio2.WHITE)
 print("\n")
 input("Press enter to exit...")
-
-# TODO 当遇到网络连接超时的处理方法
